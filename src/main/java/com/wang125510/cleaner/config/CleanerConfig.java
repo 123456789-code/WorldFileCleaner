@@ -12,6 +12,10 @@ public class CleanerConfig {
         return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public List<String> getDeletePatterns() {
         return deletePatterns;
     }

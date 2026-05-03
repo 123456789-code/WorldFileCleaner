@@ -22,6 +22,9 @@
 		],
 		"fabric-datagen": [
 			"com.wang125510.cleaner.client.WorldFileCleanerDataGenerator"
+		],
+		"modmenu": [
+			"com.wang125510.cleaner.client.ModMenuIntegration"
 		]
 	},
 	"mixins": [

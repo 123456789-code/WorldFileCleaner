@@ -17,6 +17,10 @@ public class WorldFileCleaner implements ModInitializer {
 
 	private static ConfigManager configManager;
 
+	public static ConfigManager getConfigManager() {
+		return configManager;
+	}
+
 	@Override
 	public void onInitialize() {
 		configManager = new ConfigManager();
