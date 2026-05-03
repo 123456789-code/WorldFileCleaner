@@ -24,7 +24,7 @@ config/autoclean.json
 {
 	"enabled": false,
 	"deletePatterns": [],
-	"whiteList": [],
+	"whiteList": []
 }
 ```
 
