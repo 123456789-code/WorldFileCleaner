@@ -65,8 +65,15 @@ public class CleanerLogic {
             if (m.matches(relative)) return false;
         }
 
-        for (PathMatcher m : deleteMatchers) {
-            if (m.matches(relative)) return true;
+        // Check if this file or any ancestor directory matches a delete pattern.
+        // This allows root-level patterns like "scripts" to match all files within
+        // a scripts/ directory, so the directory tree ends up entirely deleted.
+        Path current = relative;
+        while (current != null) {
+            for (PathMatcher m : deleteMatchers) {
+                if (m.matches(current)) return true;
+            }
+            current = current.getParent();
         }
 
         return false;
