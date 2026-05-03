@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "world_file_cleaner",
+	"version": "${version}",
+	"name": "World File Cleaner",
+	"description": "This mod will clean world files when server stop",
+	"authors": [
+		"Wang125510"
+	],
+	"contact": {
+		"sources": "https://github.com/123456789-code/WorldFileCleaner"
+	},
+	"license": "MIT",
+	"icon": "assets/world_file_cleaner/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.wang125510.cleaner.WorldFileCleaner"
+		],
+		"client": [
+			"com.wang125510.cleaner.client.WorldFileCleanerClient"
+		],
+		"fabric-datagen": [
+			"com.wang125510.cleaner.client.WorldFileCleanerDataGenerator"
+		]
+	},
+	"mixins": [
+		"world_file_cleaner.mixins.json",
+		{
+			"config": "world_file_cleaner.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
