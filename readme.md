@@ -22,14 +22,25 @@ config/autoclean.json
 配置示例：
 ```json
 {
-	"enabled": false,
-	"deletePatterns": [],
-	"whiteList": []
+	"worldFileEnabled": true,
+	"worldFileDeletePatterns": [
+        "session.lock"
+	],
+	"serverFileEnabled": true,
+	"serverFileDeletePatterns": [
+		".cache",
+		"logs"
+	],
+	"whiteList": [
+		"latest.log"
+	]
 }
 ```
 
-- `enabled`：设为 `false` 可完全禁用模组。
-- `deletePatterns`：世界存档文件夹内要删除的文件，可用'*'作为通配符。
+- `worldFileEnabled`：存档文件的开关。
+- `worldFileDeletePatterns`：世界存档文件夹内要删除的文件，可用'*'作为通配符。
+- `serverFileEnabled`：游戏文件的开关。
+- `serverFileDeletePatterns`：游戏根目录内要删除的文件，可用'*'作为通配符。
 - `whiteList`：删除白名单，优先级高。
 
 > 💡 **警告**：删除区域文件（*.mca）或 playerdata 会丢失游戏进度。默认模式已排除这些文件。
