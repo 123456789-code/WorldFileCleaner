@@ -21,7 +21,7 @@ public class CleanerLogic {
 
         LOGGER.info("Starting cleanup for world: {}", worldDir);
 
-        List<PathMatcher> deleteMatchers = config.getDeletePatterns().stream()
+        List<PathMatcher> deleteMatchers = config.getWorldFileDeletePatterns().stream()
                 .map(p -> FileSystems.getDefault().getPathMatcher("glob:" + p))
                 .toList();
 
@@ -35,7 +35,7 @@ public class CleanerLogic {
         try (Stream<Path> stream = Files.walk(worldDir)) {
             List<Path> targets = stream
                     .filter(Files::isRegularFile)
-                    .filter(file -> shouldDelete(worldDir.relativize(file), deleteMatchers, whitelistMatchers))
+                    .filter(file -> shouldDelete(worldDir.relativize(file), deleteMatchers, whitelistMatchers, true))
                     .toList();
 
             for (Path file : targets) {
@@ -58,8 +58,53 @@ public class CleanerLogic {
         LOGGER.info("Cleanup done. Deleted: {}, Failed: {}", deleted, failed);
     }
 
-    private static boolean shouldDelete(Path relative, List<PathMatcher> deleteMatchers, List<PathMatcher> whitelistMatchers) {
-        if (isSafetyExcluded(relative)) return false;
+    public static void cleanServer(Path serverFileDir, CleanerConfig config) {
+        if (!Files.isDirectory(serverFileDir)) {
+            LOGGER.info("Server file directory does not exist: {}", serverFileDir);
+            return;
+        }
+
+        LOGGER.info("Starting cleanup for server files: {}", serverFileDir);
+
+        List<PathMatcher> deleteMatchers = config.getServerFileDeletePatterns().stream()
+                .map(p -> FileSystems.getDefault().getPathMatcher("glob:" + p))
+                .toList();
+
+        List<PathMatcher> whitelistMatchers = config.getWhiteList().stream()
+                .map(p -> FileSystems.getDefault().getPathMatcher("glob:" + p))
+                .toList();
+
+        int deleted = 0;
+        int failed = 0;
+
+        try (Stream<Path> stream = Files.walk(serverFileDir)) {
+            List<Path> targets = stream
+                    .filter(Files::isRegularFile)
+                    .filter(file -> shouldDelete(serverFileDir.relativize(file), deleteMatchers, whitelistMatchers, false))
+                    .toList();
+
+            for (Path file : targets) {
+                try {
+                    Files.deleteIfExists(file);
+                    LOGGER.debug("Deleted server file: {}", serverFileDir.relativize(file));
+                    deleted++;
+                } catch (IOException e) {
+                    LOGGER.warn("Failed to delete server file: {}", serverFileDir.relativize(file), e);
+                    failed++;
+                }
+            }
+
+            removeEmptyDirs(serverFileDir);
+
+        } catch (IOException e) {
+            LOGGER.error("Error during server file cleanup", e);
+        }
+
+        LOGGER.info("Server file cleanup done. Deleted: {}, Failed: {}", deleted, failed);
+    }
+
+    private static boolean shouldDelete(Path relative, List<PathMatcher> deleteMatchers, List<PathMatcher> whitelistMatchers, boolean checkSafety) {
+        if (checkSafety && isSafetyExcluded(relative)) return false;
 
         for (PathMatcher m : whitelistMatchers) {
             if (m.matches(relative)) return false;

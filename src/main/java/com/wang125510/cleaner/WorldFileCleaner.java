@@ -1,8 +1,10 @@
 package com.wang125510.cleaner;
 
 import com.wang125510.cleaner.config.ConfigManager;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -27,15 +29,24 @@ public class WorldFileCleaner implements ModInitializer {
 		LOGGER.info("WorldFileCleaner initialized");
 
 		ServerLifecycleEvents.SERVER_STOPPING.register(this::onServerStopping);
+
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
+			ServerLifecycleEvents.SERVER_STARTING.register(this::onGameStopping);
+		}
+
 	}
 
 	private void onServerStopping(MinecraftServer server) {
-		if (!configManager.getConfig().isEnabled()) {
-			LOGGER.info("Cleanup disabled via config");
-			return;
+		if (configManager.getConfig().isWorldFileEnabled()) {
+			Path worldDir = server.getWorldPath(LevelResource.ROOT);
+			CleanerLogic.cleanWorld(worldDir, configManager.getConfig());
 		}
+	}
 
-		Path worldDir = server.getWorldPath(LevelResource.ROOT);
-		CleanerLogic.cleanWorld(worldDir, configManager.getConfig());
+	private void onGameStopping(MinecraftServer server) {
+		if (configManager.getConfig().isServerFileEnabled()) {
+			Path serverFileDir = FabricLoader.getInstance().getGameDir();
+			CleanerLogic.cleanServer(serverFileDir, configManager.getConfig());
+		}
 	}
 }

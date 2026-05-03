@@ -4,20 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CleanerConfig {
-    private boolean enabled = false;
-    private List<String> deletePatterns = new ArrayList<>();
+    private boolean worldFileEnabled = false;
+    private List<String> worldFileDeletePatterns = new ArrayList<>();
+    private boolean serverFileEnabled = false;
+    private List<String> serverFileDeletePatterns = new ArrayList<>();
     private List<String> whiteList = new ArrayList<>();
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isWorldFileEnabled() {
+        return worldFileEnabled;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setWorldFileEnabled(boolean enabled) {
+        this.worldFileEnabled = enabled;
     }
 
-    public List<String> getDeletePatterns() {
-        return deletePatterns;
+    public List<String> getWorldFileDeletePatterns() {
+        return worldFileDeletePatterns;
+    }
+
+    public boolean isServerFileEnabled() {
+        return serverFileEnabled;
+    }
+
+    public void setServerFileEnabled(boolean serverFileEnabled) {
+        this.serverFileEnabled = serverFileEnabled;
+    }
+
+    public List<String> getServerFileDeletePatterns() {
+        return serverFileDeletePatterns;
     }
 
     public List<String> getWhiteList() {
